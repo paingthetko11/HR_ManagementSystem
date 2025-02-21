@@ -81,7 +81,7 @@ namespace HR_ManagementSystem.Controllers
         }
         [HttpPut("{id}")]
         [EndpointSummary("Update an Policy")]
-        public async Task<IActionResult> UpdateHrPolicy(int id)
+        public async Task<IActionResult> UpdateHrPolicy(int id, [FromBody] HrPolicy policy)
         {
             HrPolicy? existingPolicy = await _context.HrPolicies.FirstOrDefaultAsync(x => x.Id == id);
             if (existingPolicy == null)
@@ -95,6 +95,10 @@ namespace HR_ManagementSystem.Controllers
                 });
             }
 
+            existingPolicy.Title = policy.Title;
+            existingPolicy.Description = policy.Description;
+            existingPolicy.PolicyType = policy.PolicyType;
+            existingPolicy.CompanyId = policy.CompanyId;
             _context.HrPolicies.Update(existingPolicy);
 
             return _context.SaveChanges() > 0
@@ -139,7 +143,7 @@ namespace HR_ManagementSystem.Controllers
                     Success = true,
                     Code = StatusCodes.Status200OK,
                     Data = null,
-                    Message = "Successfully deleted Policy"
+                    Message = "Successfully   deleted Policy"
                 })
                 : StatusCode(StatusCodes.Status500InternalServerError, new DefaultResponseModel()
                 {
