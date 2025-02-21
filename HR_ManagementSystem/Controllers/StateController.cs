@@ -11,7 +11,7 @@ namespace HR_ManagementSystem.Controllers
     public class StateController(AppDbContext context) : ControllerBase
     {
         private readonly AppDbContext _context = context;
-
+            
         [HttpGet]
         [EndpointSummary("Get all State")]
 
