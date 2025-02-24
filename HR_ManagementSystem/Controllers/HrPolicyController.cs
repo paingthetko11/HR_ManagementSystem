@@ -13,7 +13,7 @@ namespace HR_ManagementSystem.Controllers
 
         [HttpGet]
         [EndpointSummary("Get all Policy")]
-
+         
         public async Task<IActionResult> GetStateAsync()
         {
             List<HrPolicy> policy = await _context.HrPolicies.ToListAsync();
@@ -105,7 +105,7 @@ namespace HR_ManagementSystem.Controllers
                 ? Created("api/policy/{id}", new DefaultResponseModel()
                 {
                     Success = true,
-                    Code = StatusCodes.Status201Created,
+                    Code = StatusCodes.Status200OK,
                     Data = existingPolicy,
                     Message = " Sucessfully Updated"
                 })
