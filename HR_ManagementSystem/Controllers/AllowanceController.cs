@@ -7,7 +7,7 @@ namespace HR_ManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AllowanceController( AppDbContext context) : ControllerBase
+    public class AllowanceController(AppDbContext context) : ControllerBase
     {
         private readonly AppDbContext _context = context;
 
@@ -51,6 +51,110 @@ namespace HR_ManagementSystem.Controllers
                     Message = "Street found"
                 });
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync([FromBody] HrAllowance allowrance)
+        {
+            if (await _context.HrAllowances.AnyAsync(x => x.AllowanceId == allowrance.AllowanceId))
+            {
+                return BadRequest(new DefaultResponseModel()
+                {
+                    Success = false,
+                    Code = StatusCodes.Status400BadRequest,
+                    Data = null,
+                    Message = "Allowrance id already exist"
+                });
+            }
+
+            _ = _context.HrAllowances.Add(allowrance);
+            _ = await _context.SaveChangesAsync();
+
+            return Created("api/HrPolicy", new DefaultResponseModel()
+            {
+                Success = true,
+                Code = StatusCodes.Status200OK,
+                Data = allowrance,
+                Message = "Successfully created"
+            });
+        }
+        [HttpPut("{id}")]
+        [EndpointSummary("Update an Allowrance")]
+        public async Task<IActionResult> UpdateHrPolicy(int id, [FromBody] HrAllowance allowance)
+        {
+            HrAllowance? existingAllowrance = await _context.HrAllowances.FirstOrDefaultAsync(x => x.AllowanceId == id);
+            if (existingAllowrance == null)
+            {
+                return NotFound(new DefaultResponseModel()
+                {
+                    Success = false,
+                    Code = StatusCodes.Status400BadRequest,
+                    Data = null,
+                    Message = " Failed To Updated "
+                });
+            }
+
+            existingAllowrance.CompanyId = allowance.CompanyId;
+            existingAllowrance.CompanyId = allowance.CompanyId;
+            existingAllowrance.BranchId = allowance.BranchId;
+            existingAllowrance.DeptId = allowance.DeptId;
+            existingAllowrance.PositionId = allowance.PositionId;
+            existingAllowrance.AllowanceName = allowance.AllowanceName;
+            existingAllowrance.Description = allowance.Description;
+            existingAllowrance.Status = allowance.Status;
+            _ = _context.HrAllowances.Update(existingAllowrance);
+
+            return _context.SaveChanges() > 0
+                ? Created("api/allowrance/{id}", new DefaultResponseModel()
+                {
+                    Success = true,
+                    Code = StatusCodes.Status200OK,
+                    Data = existingAllowrance,
+                    Message = " Sucessfully Updated"
+                })
+            : NotFound(new DefaultResponseModel()
+            {
+                Success = false,
+                Code = StatusCodes.Status400BadRequest,
+                Data = null,
+                Message = " Failed To Updated "
+            });
+
+        }
+        [HttpDelete("{id}")]
+        [EndpointSummary("Delete a Allowrance by ID")]
+        public async Task<IActionResult> DeleteAsync(long id)
+        {
+            HrAllowance? allowance = await _context.HrAllowances.FirstOrDefaultAsync(x => x.AllowanceId == id);
+
+            if (allowance == null)
+            {
+                return NotFound(new DefaultResponseModel()
+                {
+                    Success = false,
+                    Code = StatusCodes.Status404NotFound,
+                    Data = null,
+                    Message = "State not found"
+                });
+            }
+
+            _ = _context.HrAllowances.Remove(allowance);
+
+            return await _context.SaveChangesAsync() > 0
+                ? Ok(new DefaultResponseModel()
+                {
+                    Success = true,
+                    Code = StatusCodes.Status200OK,
+                    Data = null,
+                    Message = "Successfully   deleted Allowrance"
+                })
+                : StatusCode(StatusCodes.Status500InternalServerError, new DefaultResponseModel()
+                {
+                    Success = false,
+                    Code = StatusCodes.Status500InternalServerError,
+                    Data = null,
+                    Message = "Failed to delete Allowrance"
+                });
         }
 
     }
