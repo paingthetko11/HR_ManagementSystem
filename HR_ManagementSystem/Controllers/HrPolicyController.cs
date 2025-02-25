@@ -1,5 +1,4 @@
 ﻿using HR_ManagementSystem.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +12,7 @@ namespace HR_ManagementSystem.Controllers
 
         [HttpGet]
         [EndpointSummary("Get all Policy")]
-         
+
         public async Task<IActionResult> GetStateAsync()
         {
             List<HrPolicy> policy = await _context.HrPolicies.ToListAsync();
@@ -33,26 +32,21 @@ namespace HR_ManagementSystem.Controllers
         {
             HrPolicy? policy = await _context.HrPolicies.FirstOrDefaultAsync(x => x.Id == id);
 
-            if (policy == null)
-            {
-                return NotFound(new DefaultResponseModel()
+            return policy == null
+                ? NotFound(new DefaultResponseModel()
                 {
                     Success = false,
                     Code = StatusCodes.Status404NotFound,
                     Data = null,
                     Message = "Policy Not found"
-                });
-            }
-            else
-            {
-                return Ok(new DefaultResponseModel()
+                })
+                : Ok(new DefaultResponseModel()
                 {
                     Success = true,
                     Code = StatusCodes.Status200OK,
                     Data = policy,
                     Message = "Policy found"
                 });
-            }
         }
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] HrPolicy policy)
@@ -99,7 +93,7 @@ namespace HR_ManagementSystem.Controllers
             existingPolicy.Description = policy.Description;
             existingPolicy.PolicyType = policy.PolicyType;
             existingPolicy.CompanyId = policy.CompanyId;
-            _context.HrPolicies.Update(existingPolicy);
+            _ = _context.HrPolicies.Update(existingPolicy);
 
             return _context.SaveChanges() > 0
                 ? Created("api/policy/{id}", new DefaultResponseModel()
@@ -116,7 +110,6 @@ namespace HR_ManagementSystem.Controllers
                 Data = null,
                 Message = " Failed To Updated "
             });
-
         }
         [HttpDelete("{id}")]
         [EndpointSummary("Delete a Policy by ID")]
@@ -135,7 +128,7 @@ namespace HR_ManagementSystem.Controllers
                 });
             }
 
-            _context.HrPolicies.Remove(policy);
+            _ = _context.HrPolicies.Remove(policy);
 
             return await _context.SaveChangesAsync() > 0
                 ? Ok(new DefaultResponseModel()
