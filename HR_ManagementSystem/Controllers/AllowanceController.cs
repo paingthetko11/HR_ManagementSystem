@@ -12,7 +12,7 @@ namespace HR_ManagementSystem.Controllers
         private readonly AppDbContext _context = context;
 
         [HttpGet]
-        [EndpointSummary("Get all Allowrance")]
+        [EndpointSummary("Get all Allowance")]
 
         public async Task<IActionResult> GetAllowanceAsync()
         {
@@ -38,7 +38,7 @@ namespace HR_ManagementSystem.Controllers
                     Success = false,
                     Code = StatusCodes.Status404NotFound,
                     Data = null,
-                    Message = "Street Not found"
+                    Message = "Allowance Not found"
                 });
             }
             else
@@ -48,7 +48,7 @@ namespace HR_ManagementSystem.Controllers
                     Success = true,
                     Code = StatusCodes.Status200OK,
                     Data = allowance,
-                    Message = "Street found"
+                    Message = "Allowance found"
                 });
             }
         }
@@ -63,14 +63,14 @@ namespace HR_ManagementSystem.Controllers
                     Success = false,
                     Code = StatusCodes.Status400BadRequest,
                     Data = null,
-                    Message = "Allowrance id already exist"
+                    Message = "Allowance id already exist"
                 });
             }
 
             _ = _context.HrAllowances.Add(allowrance);
             _ = await _context.SaveChangesAsync();
 
-            return Created("api/HrPolicy", new DefaultResponseModel()
+            return Created("api/Allowance", new DefaultResponseModel()
             {
                 Success = true,
                 Code = StatusCodes.Status200OK,
@@ -78,8 +78,9 @@ namespace HR_ManagementSystem.Controllers
                 Message = "Successfully created"
             });
         }
+
         [HttpPut("{id}")]
-        [EndpointSummary("Update an Allowrance")]
+        [EndpointSummary("Update an Allowance")]
         public async Task<IActionResult> UpdateHrPolicy(int id, [FromBody] HrAllowance allowance)
         {
             HrAllowance? existingAllowrance = await _context.HrAllowances.FirstOrDefaultAsync(x => x.AllowanceId == id);
@@ -105,7 +106,7 @@ namespace HR_ManagementSystem.Controllers
             _ = _context.HrAllowances.Update(existingAllowrance);
 
             return _context.SaveChanges() > 0
-                ? Created("api/allowrance/{id}", new DefaultResponseModel()
+                ? Created("api/Allowance/{id}", new DefaultResponseModel()
                 {
                     Success = true,
                     Code = StatusCodes.Status200OK,
@@ -122,7 +123,7 @@ namespace HR_ManagementSystem.Controllers
 
         }
         [HttpDelete("{id}")]
-        [EndpointSummary("Delete a Allowrance by ID")]
+        [EndpointSummary("Delete a Allowance by ID")]
         public async Task<IActionResult> DeleteAsync(long id)
         {
             HrAllowance? allowance = await _context.HrAllowances.FirstOrDefaultAsync(x => x.AllowanceId == id);
@@ -134,7 +135,7 @@ namespace HR_ManagementSystem.Controllers
                     Success = false,
                     Code = StatusCodes.Status404NotFound,
                     Data = null,
-                    Message = "State not found"
+                    Message = "Allowance not found"
                 });
             }
 
@@ -146,14 +147,14 @@ namespace HR_ManagementSystem.Controllers
                     Success = true,
                     Code = StatusCodes.Status200OK,
                     Data = null,
-                    Message = "Successfully   deleted Allowrance"
+                    Message = "Successfully   deleted Allowance"
                 })
                 : StatusCode(StatusCodes.Status500InternalServerError, new DefaultResponseModel()
                 {
                     Success = false,
                     Code = StatusCodes.Status500InternalServerError,
                     Data = null,
-                    Message = "Failed to delete Allowrance"
+                    Message = "Failed to delete Allowance"
                 });
         }
 
