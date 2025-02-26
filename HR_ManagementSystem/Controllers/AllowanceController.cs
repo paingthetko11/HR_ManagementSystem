@@ -103,6 +103,9 @@ namespace HR_ManagementSystem.Controllers
             existingAllowrance.AllowanceName = allowance.AllowanceName;
             existingAllowrance.Description = allowance.Description;
             existingAllowrance.Status = allowance.Status;
+            existingAllowrance.UpdatedBy = "Admin";
+            existingAllowrance.UpdatedOn = DateTime.Now;
+
             _ = _context.HrAllowances.Update(existingAllowrance);
 
             return _context.SaveChanges() > 0
