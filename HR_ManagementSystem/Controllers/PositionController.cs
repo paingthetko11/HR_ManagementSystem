@@ -11,47 +11,123 @@ namespace HR_ManagementSystem.Controllers
     {
         private readonly AppDbContext _context = context;
 
-        [HttpGet]
-        [EndpointSummary("Get all Position")]
+        //[HttpGet]
+        //[EndpointSummary("Get all Position")]
 
-        public async Task<IActionResult> GetAllowanceAsync()
+        //public async Task<IActionResult> GetAllowanceAsync()
+        //{
+        //    List<HrPosition> street = await _context.HrPositions.ToListAsync();
+        //    return Ok(new DefaultResponseModel()
+        //    {
+        //        Success = true,
+        //        Code = StatusCodes.Status200OK,
+        //        Data = street,
+        //        Message = "sucessfully Position found"
+        //    });
+        //}
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(List<ViHrBranch>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAsync()
         {
-            List<HrPosition> street = await _context.HrPositions.ToListAsync();
             return Ok(new DefaultResponseModel()
             {
                 Success = true,
                 Code = StatusCodes.Status200OK,
-                Data = street,
-                Message = "sucessfully Position found"
+                Data = await _context.ViHrPositions.Where(x => !x.DeletedOn.HasValue).ToListAsync()
             });
         }
-        [HttpGet("{id}")]
-        [EndpointSummary("Get By Id")]
+        //[HttpGet("{id}")]
+        //[EndpointSummary("Get By Id")]
 
-        public async Task<IActionResult> GetbyIdAsync(long id)
+        //public async Task<IActionResult> GetbyIdAsync(long id)
+        //{
+        //    HrPosition? position = await _context.HrPositions.FirstOrDefaultAsync(x => x.PositionId == id);
+
+        //    if (position == null)
+        //    {
+        //        return NotFound(new DefaultResponseModel()
+        //        {
+        //            Success = false,
+        //            Code = StatusCodes.Status404NotFound,
+        //            Data = null,
+        //            Message = "Position Not found"
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return Ok(new DefaultResponseModel()
+        //        {
+        //            Success = true,
+        //            Code = StatusCodes.Status200OK,
+        //            Data = position,
+        //            Message = "Position found"
+        //        });
+        //    }
+        //}
+        [HttpGet("by-companyId")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ViHrBranch), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DefaultResponseModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ViHrBranch>> GetByDeptIdAsync(string companyId)
         {
-            HrPosition? position = await _context.HrPositions.FirstOrDefaultAsync(x => x.PositionId == id);
-
-            if (position == null)
+            return Ok(new DefaultResponseModel()
             {
-                return NotFound(new DefaultResponseModel()
-                {
-                    Success = false,
-                    Code = StatusCodes.Status404NotFound,
-                    Data = null,
-                    Message = "Position Not found"
-                });
-            }
-            else
-            {
-                return Ok(new DefaultResponseModel()
+                Code = StatusCodes.Status200OK,
+                Success = true,
+                Data = await _context.ViHrBranches.Where(x => x.CompanyId == companyId && !x.DeletedOn.HasValue).ToListAsync(),
+            });
+        }
+        [HttpGet("by-positionId")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ViHrPosition), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DefaultResponseModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ViHrPosition?>> GetByIdAsync(long id)
+        {
+            var ViPosition = await _context.ViHrPositions.Where(x => x.PositionId == id).ToListAsync();
+            return ViPosition != null
+                ? Ok(new DefaultResponseModel()
                 {
                     Success = true,
                     Code = StatusCodes.Status200OK,
-                    Data = position,
-                    Message = "Position found"
+                    Data = ViPosition,
+                    Message = "Position datat found."
+                })
+                : NotFound(new DefaultResponseModel()
+                {
+                    Success = false,
+                    Code = StatusCodes.Status404NotFound,
+                    Message = "Position data not found."
                 });
+        }
+
+        [HttpGet("by")]
+        public async Task<IActionResult> GetByCompanyAsync(string companyid, long? branchid, long? deptId)
+        {
+            IReadOnlyList<ViHrPosition>? position = [];
+
+            if (!string.IsNullOrEmpty(companyid) && branchid.HasValue && deptId.HasValue)
+            {
+                position = await _context.ViHrPositions.Where(x =>
+                !x.DeletedOn.HasValue && x.CompanyId == companyid && x.BranchId == branchid && x.DeptId == deptId).ToListAsync();
             }
+            else if (!string.IsNullOrEmpty(companyid) && branchid.HasValue)
+            {
+                position = await _context.ViHrPositions.Where(x =>
+                !x.DeletedOn.HasValue && x.CompanyId == companyid && x.BranchId == branchid).ToListAsync();
+            }
+            else if (!string.IsNullOrEmpty(companyid))
+            {
+                position = await _context.ViHrPositions.Where(x =>
+                !x.DeletedOn.HasValue && x.CompanyId == companyid).ToListAsync();
+            }
+
+            return Ok(new DefaultResponseModel()
+            {
+                Success = true,
+                Code = StatusCodes.Status200OK,
+                Data = position,
+            });
         }
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] HrPosition position)
@@ -78,6 +154,7 @@ namespace HR_ManagementSystem.Controllers
                 Message = "Successfully created"
             });
         }
+
         [HttpPut("{id}")]
         [EndpointSummary("Update an Position")]
         public async Task<IActionResult> UpdateHrPosition(int id, [FromBody] HrPosition position)
@@ -125,7 +202,7 @@ namespace HR_ManagementSystem.Controllers
                Message = " Failed To Updated "
            });
         }
-            [HttpDelete("{id}")]
+        [HttpDelete("{id}")]
         [EndpointSummary("Delete a Allowance by ID")]
         public async Task<IActionResult> DeleteAsync(long id)
         {
