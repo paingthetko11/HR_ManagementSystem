@@ -82,7 +82,7 @@ namespace HR_ManagementSystem.Controllers
                     Code = StatusCodes.Status200OK,
                     Data = ViBranch,
                     Message = "Branch data found."
-                }).
+                })
                 : NotFound(new DefaultResponseModel()
                 {
                     Success = false,
