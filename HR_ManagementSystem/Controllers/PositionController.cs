@@ -7,38 +7,39 @@ namespace HR_ManagementSystem.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AllowanceController(AppDbContext context) : ControllerBase
+    public class PositionController(AppDbContext context) : ControllerBase
     {
         private readonly AppDbContext _context = context;
 
         [HttpGet]
-        [EndpointSummary("Get all Allowance")]
+        [EndpointSummary("Get all Position")]
 
         public async Task<IActionResult> GetAllowanceAsync()
         {
-            List<HrAllowance> street = await _context.HrAllowances.ToListAsync();
+            List<HrPosition> street = await _context.HrPositions.ToListAsync();
             return Ok(new DefaultResponseModel()
             {
                 Success = true,
                 Code = StatusCodes.Status200OK,
                 Data = street,
-                Message = "sucessfully Allowance found"
+                Message = "sucessfully Position found"
             });
         }
         [HttpGet("{id}")]
-        [EndpointSummary("Get by ID")]
+        [EndpointSummary("Get By Id")]
+
         public async Task<IActionResult> GetbyIdAsync(long id)
         {
-            HrAllowance? allowance = await _context.HrAllowances.FirstOrDefaultAsync(x => x.AllowanceId == id);
+            HrPosition? position = await _context.HrPositions.FirstOrDefaultAsync(x => x.PositionId == id);
 
-            if (allowance == null)
+            if (position == null)
             {
                 return NotFound(new DefaultResponseModel()
                 {
                     Success = false,
                     Code = StatusCodes.Status404NotFound,
                     Data = null,
-                    Message = "Allowance Not found"
+                    Message = "Position Not found"
                 });
             }
             else
@@ -47,44 +48,42 @@ namespace HR_ManagementSystem.Controllers
                 {
                     Success = true,
                     Code = StatusCodes.Status200OK,
-                    Data = allowance,
-                    Message = "Allowance found"
+                    Data = position,
+                    Message = "Position found"
                 });
             }
         }
-
         [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] HrAllowance allowrance)
+        public async Task<IActionResult> CreateAsync([FromBody] HrPosition position)
         {
-            if (await _context.HrAllowances.AnyAsync(x => x.AllowanceId == allowrance.AllowanceId))
+            if (await _context.HrPositions.AnyAsync(x => x.PositionId == position.PositionId))
             {
                 return BadRequest(new DefaultResponseModel()
                 {
                     Success = false,
                     Code = StatusCodes.Status400BadRequest,
                     Data = null,
-                    Message = "Allowance id already exist"
+                    Message = "Position id already exist"
                 });
             }
 
-            _ = _context.HrAllowances.Add(allowrance);
+            _ = _context.HrPositions.Add(position);
             _ = await _context.SaveChangesAsync();
 
-            return Created("api/Allowance", new DefaultResponseModel()
+            return Created("api/Company", new DefaultResponseModel()
             {
                 Success = true,
                 Code = StatusCodes.Status200OK,
-                Data = allowrance,
+                Data = position,
                 Message = "Successfully created"
             });
         }
-
         [HttpPut("{id}")]
-        [EndpointSummary("Update an Allowance")]
-        public async Task<IActionResult> UpdateHrPolicy(int id, [FromBody] HrAllowance allowance)
+        [EndpointSummary("Update an Position")]
+        public async Task<IActionResult> UpdateHrPosition(string id, [FromBody] HrPosition position)
         {
-            HrAllowance? existingAllowrance = await _context.HrAllowances.FirstOrDefaultAsync(x => x.AllowanceId == id);
-            if (existingAllowrance == null)
+            HrPosition? existingPosition = await _context.HrPositions.FirstOrDefaultAsync(x => x.PositionId == id);
+            if (existingPosition == null)
             {
                 return NotFound(new DefaultResponseModel()
                 {
@@ -95,43 +94,28 @@ namespace HR_ManagementSystem.Controllers
                 });
             }
 
-            existingAllowrance.CompanyId = allowance.CompanyId;
-            existingAllowrance.CompanyId = allowance.CompanyId;
-            existingAllowrance.BranchId = allowance.BranchId;
-            existingAllowrance.DeptId = allowance.DeptId;
-            existingAllowrance.PositionId = allowance.PositionId;
-            existingAllowrance.AllowanceName = allowance.AllowanceName;
-            existingAllowrance.Description = allowance.Description;
-            existingAllowrance.Status = allowance.Status;
-            existingAllowrance.UpdatedBy = "Admin";
-            existingAllowrance.UpdatedOn = DateTime.Now;
+            existingPosition.PositionId = position.PositionId;
+            existingPosition.DeptId = position.DeptId;
+            existingPosition.PositionName = position.PositionName;
+            existingPosition.Status = position.Status;
+            existingPosition.CreatedOn = position.CreatedOn;
+            existingPosition.CreatedBy = position.CreatedBy;
+            existingPosition.UpdatedOn = position.UpdatedOn;
+            existingPosition.UpdatedBy = position.UpdatedBy;
+            existingPosition.DeletedOn = position.DeletedOn;
+            existingPosition.DeletedBy = position.DeletedBy;
+            existingPosition.Remark = position.Remark;
+            existingPosition.Dept = position.Dept;
 
-            _ = _context.HrAllowances.Update(existingAllowrance);
-
-            return _context.SaveChanges() > 0
-                ? Created("api/Allowance/{id}", new DefaultResponseModel()
-                {
-                    Success = true,
-                    Code = StatusCodes.Status200OK,
-                    Data = existingAllowrance,
-                    Message = " Sucessfully Updated"
-                })
-            : NotFound(new DefaultResponseModel()
-            {
-                Success = false,
-                Code = StatusCodes.Status400BadRequest,
-                Data = null,
-                Message = " Failed To Updated "
-            });
-
+            
         }
-        [HttpDelete("{id}")]
+            [HttpDelete("{id}")]
         [EndpointSummary("Delete a Allowance by ID")]
         public async Task<IActionResult> DeleteAsync(long id)
         {
-            HrAllowance? allowance = await _context.HrAllowances.FirstOrDefaultAsync(x => x.AllowanceId == id);
+            HrPosition? position = await _context.HrPositions.FirstOrDefaultAsync(x => x.PositionId == id);
 
-            if (allowance == null)
+            if (position == null)
             {
                 return NotFound(new DefaultResponseModel()
                 {
@@ -141,7 +125,7 @@ namespace HR_ManagementSystem.Controllers
                     Message = "Allowance not found"
                 });
             }
-            _ = _context.HrAllowances.Remove(allowance);
+            _ = _context.HrPositions.Remove(position);
 
             return await _context.SaveChangesAsync() > 0
                 ? Ok(new DefaultResponseModel()
@@ -149,16 +133,17 @@ namespace HR_ManagementSystem.Controllers
                     Success = true,
                     Code = StatusCodes.Status200OK,
                     Data = null,
-                    Message = "Successfully   deleted Allowance"
+                    Message = "Successfully   deleted Position"
                 })
                 : StatusCode(StatusCodes.Status500InternalServerError, new DefaultResponseModel()
                 {
                     Success = false,
                     Code = StatusCodes.Status500InternalServerError,
                     Data = null,
-                    Message = "Failed to delete Allowance"
+                    Message = "Failed to delete Position"
                 });
         }
 
     }
 }
+
