@@ -80,7 +80,7 @@ namespace HR_ManagementSystem.Controllers
         }
         [HttpPut("{id}")]
         [EndpointSummary("Update an Position")]
-        public async Task<IActionResult> UpdateHrPosition(string id, [FromBody] HrPosition position)
+        public async Task<IActionResult> UpdateHrPosition(int id, [FromBody] HrPosition position)
         {
             HrPosition? existingPosition = await _context.HrPositions.FirstOrDefaultAsync(x => x.PositionId == id);
             if (existingPosition == null)
@@ -107,7 +107,23 @@ namespace HR_ManagementSystem.Controllers
             existingPosition.Remark = position.Remark;
             existingPosition.Dept = position.Dept;
 
-            
+            _ = _context.HrPositions.Update(existingPosition);
+
+            return _context.SaveChanges() > 0
+               ? Created("api/Position/{id}", new DefaultResponseModel()
+               {
+                   Success = true,
+                   Code = StatusCodes.Status200OK,
+                   Data = existingPosition,
+                   Message = " Sucessfully Updated"
+               })
+           : NotFound(new DefaultResponseModel()
+           {
+               Success = false,
+               Code = StatusCodes.Status400BadRequest,
+               Data = null,
+               Message = " Failed To Updated "
+           });
         }
             [HttpDelete("{id}")]
         [EndpointSummary("Delete a Allowance by ID")]
