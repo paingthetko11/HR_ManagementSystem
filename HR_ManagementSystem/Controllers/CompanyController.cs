@@ -52,6 +52,32 @@ namespace HR_ManagementSystem.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult> CreateAsync([FromBody] HrCompany company)
+        {
+            if (await _context.HrCompanies.AnyAsync(x => x.CompanyId == company.CompanyId))
+            {
+                return BadRequest(new DefaultResponseModel()
+                {
+                    Success = false,
+                    Code = StatusCodes.Status400BadRequest,
+                    Data = null,
+                    Message = "Company id already exist"
+                });
+            }
+
+            _ = _context.HrCompanies.Add(company);
+            _ = await _context.SaveChangesAsync();
+
+            return Created("api/Company", new DefaultResponseModel()
+            {
+                Success = true,
+                Code = StatusCodes.Status200OK,
+                Data = company,
+                Message = "Successfully created"
+            });
+        }
+
         [HttpPut("{id}")]
         [EndpointSummary("Update an Company")]
         public async Task<IActionResult> UpdateHrCompany(string id, [FromBody] HrCompany company)
@@ -106,5 +132,41 @@ namespace HR_ManagementSystem.Controllers
                 Message = " Failed To Updated "
             });
         }
+        [HttpDelete("{id}")]
+        [EndpointSummary("Delete a Branch by ID")]
+        public async Task<IActionResult> DeleteAsync(string id)
+        {
+            HrCompany? company = await _context.HrCompanies.FirstOrDefaultAsync(x => x.CompanyId == id);
+
+            if (company == null)
+            {
+                return NotFound(new DefaultResponseModel()
+                {
+                    Success = false,
+                    Code = StatusCodes.Status404NotFound,
+                    Data = null,
+                    Message = "Compay not found"
+                });
+            }
+
+            _ = _context.HrCompanies.Remove(company);
+
+            return await _context.SaveChangesAsync() > 0
+                ? Ok(new DefaultResponseModel()
+                {
+                    Success = true,
+                    Code = StatusCodes.Status200OK,
+                    Data = null,
+                    Message = "Successfully   deleted Company"
+                })
+                : StatusCode(StatusCodes.Status500InternalServerError, new DefaultResponseModel()
+                {
+                    Success = false,
+                    Code = StatusCodes.Status500InternalServerError,
+                    Data = null,
+                    Message = "Failed to delete Company"
+                });
+        }
+
     }
 }
