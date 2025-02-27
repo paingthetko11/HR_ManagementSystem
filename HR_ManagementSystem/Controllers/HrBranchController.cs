@@ -12,49 +12,97 @@ namespace HR_ManagementSystem.Controllers
     {
         private readonly AppDbContext _context = context;
 
-        [HttpGet]
-        [EndpointSummary("Get all Branches")]
+        //[HttpGet]
+        //[EndpointSummary("Get all Branches")]
 
-        public async Task<IActionResult> GetAllowanceAsync()
+        //public async Task<IActionResult> GetAllowanceAsync()
+        //{
+        //    List<HrBranch> branches = await _context.HrBranches.ToListAsync();
+        //    return Ok(new DefaultResponseModel()
+        //    {
+        //        Success = true,
+        //        Code = StatusCodes.Status200OK,
+        //        Data = branches,
+        //        Message = "sucessfully Allowance found"
+        //    });
+
+        //}
+        [HttpGet]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(List<ViHrCompany>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAsync()
         {
-            List<HrBranch> branches = await _context.HrBranches.ToListAsync();
             return Ok(new DefaultResponseModel()
             {
                 Success = true,
                 Code = StatusCodes.Status200OK,
-                Data = branches,
-                Message = "sucessfully Allowance found"
+                Data = await _context.ViHrCompanies.Where(x => !x.DeletedOn.HasValue).ToListAsync(),
             });
-
         }
+        //[HttpGet("{id}")]
+        //[EndpointSummary("Get by ID")]
+        //public async Task<IActionResult> GetbyIdAsync(long id)
+        //{
+        //    //HrBranch? branches = await _context.HrBranches.FirstOrDefault(x => x.BranchId == id);
+        //    HrBranch? branches = await _context.HrBranches.FirstOrDefaultAsync(x => x.BranchId == id);
+
+
+        //    if (branches == null)
+        //    {
+        //        return NotFound(new DefaultResponseModel()
+        //        {
+        //            Success = false,
+        //            Code = StatusCodes.Status404NotFound,
+        //            Data = null,
+        //            Message = "Branch Not found"
+        //        });
+        //    }
+        //    else
+        //    {
+        //        return Ok(new DefaultResponseModel()
+        //        {
+        //            Success = true,
+        //            Code = StatusCodes.Status200OK,
+        //            Data = branches,
+        //            Message = "Branch found"
+        //        });
+        //    }
+        //}
         [HttpGet("{id}")]
-        [EndpointSummary("Get by ID")]
-        public async Task<IActionResult> GetbyIdAsync(long id)
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ViHrBranch), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DefaultResponseModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ViHrBranch>> GetByIdAsync(long id)
         {
-            //HrBranch? branches = await _context.HrBranches.FirstOrDefault(x => x.BranchId == id);
-            HrBranch? branches = await _context.HrBranches.FirstOrDefaultAsync(x => x.BranchId == id);
-
-
-            if (branches == null)
-            {
-                return NotFound(new DefaultResponseModel()
-                {
-                    Success = false,
-                    Code = StatusCodes.Status404NotFound,
-                    Data = null,
-                    Message = "Branch Not found"
-                });
-            }
-            else
-            {
-                return Ok(new DefaultResponseModel()
+            var ViBranch = await _context.ViHrBranches.Where(x => x.BranchId == id).ToListAsync();
+            return ViBranch != null
+                ? Ok(new DefaultResponseModel()
                 {
                     Success = true,
                     Code = StatusCodes.Status200OK,
-                    Data = branches,
-                    Message = "Branch found"
+                    Data = ViBranch,
+                    Message = "Branch data found."
+                }).
+                : NotFound(new DefaultResponseModel()
+                {
+                    Success = false,
+                    Code = StatusCodes.Status404NotFound,
+                    Message = "Branch data not found."
                 });
-            }
+        }
+        [HttpGet("by-companyId")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ViHrBranch), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DefaultResponseModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ViHrBranch>> GetByDeptIdAsync(string companyId)
+        {
+            //var ViPosition = await _context.ViHrPositions.Where(x => x.PositionId == id).ToListAsync();
+            return Ok(new DefaultResponseModel()
+            {
+                Code = StatusCodes.Status200OK,
+                Success = true,
+                Data = await _context.ViHrBranches.Where(x => x.CompanyId == companyId && !x.DeletedOn.HasValue).ToListAsync()
+            });
         }
 
         [HttpPut("{id}")]
