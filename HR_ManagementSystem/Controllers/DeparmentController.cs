@@ -32,7 +32,7 @@ namespace HR_ManagementSystem.Controllers
 
         public async Task<ActionResult<ViHrDepartment>> GetByIdAsync(long id)
         {
-            var viDepartment = await _context.ViHrDepartments.Where(x =>x.DeptId==id).ToListAsync();
+            var viDepartment = await _context.ViHrDepartments.Where(x => x.DeptId == id).ToListAsync();
             return viDepartment != null
                 ? Ok(new DefaultResponseModel()
                 {
@@ -74,6 +74,18 @@ namespace HR_ManagementSystem.Controllers
             });
         }
 
-
+        [HttpGet("byName")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(List<ViHrDepartment>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetByNameAsync(string deptName, string companyId, long? branchId)
+        {
+            return Ok(new DefaultResponseModel()
+            {
+                Success = true,
+                Code = StatusCodes.Status200OK,
+                Data = await _context.ViHrDepartments.Where(x => !x.DeletedOn.HasValue && x.DeptName == deptName && x.CompanyId == companyId && x.BranchId == branchId).ToListAsync(),
+                Message = "Department Is Already Exist."
+            });
+        }
     }
 }
