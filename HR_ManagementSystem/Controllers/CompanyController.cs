@@ -85,6 +85,35 @@ namespace HR_ManagementSystem.Controllers
                     Message = "Company data not found."
                 });
         }
+        [HttpGet("by-CBDid")]
+        public async Task<IActionResult> GetByCompanyAsync(string companyid, long? branchid, long? deptId)
+        {
+            IReadOnlyList<ViHrPosition>? position = [];
+
+            // CompanyId, BranchId, DepartmentId
+            if (!string.IsNullOrEmpty(companyid) && branchid.HasValue && deptId.HasValue)
+            {
+                position = await _context.ViHrPositions.Where(x =>
+                !x.DeletedOn.HasValue && x.CompanyId == companyid && x.BranchId == branchid && x.DeptId == deptId).ToListAsync();
+            }
+            else if (!string.IsNullOrEmpty(companyid) && branchid.HasValue)
+            {
+                position = await _context.ViHrPositions.Where(x =>
+                !x.DeletedOn.HasValue && x.CompanyId == companyid && x.BranchId == branchid).ToListAsync();
+            }
+            else if (!string.IsNullOrEmpty(companyid))
+            {
+                position = await _context.ViHrPositions.Where(x =>
+                !x.DeletedOn.HasValue && x.CompanyId == companyid).ToListAsync();
+            }
+
+            return Ok(new DefaultResponseModel()
+            {
+                Success = true,
+                Code = StatusCodes.Status200OK,
+                Data = position,
+            });
+        }
         [HttpPost]
         public async Task<IActionResult> CreateAsync([FromBody] HrCompany company)
         {
