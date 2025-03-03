@@ -96,7 +96,6 @@ namespace HR_ManagementSystem.Controllers
         [ProducesResponseType(typeof(DefaultResponseModel), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<ViHrBranch>> GetByDeptIdAsync(string companyId)
         {
-            //var ViPosition = await _context.ViHrPositions.Where(x => x.PositionId == id).ToListAsync();
             return Ok(new DefaultResponseModel()
             {
                 Code = StatusCodes.Status200OK,
