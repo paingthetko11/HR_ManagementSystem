@@ -566,10 +566,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.UpdatedBy).HasMaxLength(256);
             entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
 
-            entity.HasOne(d => d.Deduction).WithMany(p => p.HrEmployeeDeductions)
-                .HasForeignKey(d => d.DeductionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HR_Employee_Deduction_HR_Deduction");
+            //entity.HasOne(d => d.Deduction).WithMany(p => p.HrEmployeeDeductions)
+            //    .HasForeignKey(d => d.DeductionId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_HR_Employee_Deduction_HR_Deduction");
 
             entity.HasOne(d => d.Employee).WithMany(p => p.HrEmployeeDeductions)
                 .HasForeignKey(d => d.EmployeeId)
@@ -997,10 +997,10 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.UpdatedBy).HasMaxLength(256);
             entity.Property(e => e.UpdatedOn).HasColumnType("datetime");
 
-            entity.HasOne(d => d.Deduction).WithMany(p => p.HrRules)
-                .HasForeignKey(d => d.DeductionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HR_Rule_HR_Deduction");
+            //entity.HasOne(d => d.Deduction).WithMany(p => p.HrRules)
+            //    .HasForeignKey(d => d.DeductionId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_HR_Rule_HR_Deduction");
         });
 
         modelBuilder.Entity<HrState>(entity =>
