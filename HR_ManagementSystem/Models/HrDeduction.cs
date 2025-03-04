@@ -35,7 +35,7 @@ public partial class HrDeduction
 
     public string? Remark { get; set; }
 
-    public virtual ICollection<HrEmployeeDeduction> HrEmployeeDeductions { get; set; } = new List<HrEmployeeDeduction>();
+    //public virtual ICollection<HrEmployeeDeduction> HrEmployeeDeductions { get; set; } = new List<HrEmployeeDeduction>();
 
-    public virtual ICollection<HrRule> HrRules { get; set; } = new List<HrRule>();
+    //public virtual ICollection<HrRule> HrRules { get; set; } = new List<HrRule>();
 }
