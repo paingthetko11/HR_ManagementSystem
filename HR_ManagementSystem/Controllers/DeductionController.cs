@@ -18,7 +18,7 @@ namespace HR_ManagementSystem.Controllers
 
         public async Task<IActionResult> GetDeductionAsync()
         {
-            List<ViHrDeduction>deductions = await _context.ViHrDeductions.ToListAsync();
+            List<ViHrDeduction> deductions = await _context.ViHrDeductions.ToListAsync();
             return Ok(new DefaultResponseModel()
             {
                 Success = true,
@@ -85,6 +85,19 @@ namespace HR_ManagementSystem.Controllers
                     Message = "Deduction found"
                 });
         }
+        [HttpGet("by-deptId")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ViHrDeduction), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(DefaultResponseModel), StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ViHrDeduction?>> GetByDeptIdAsync(long deptId)
+        {
+            return Ok(new DefaultResponseModel()
+            {
+                Code = StatusCodes.Status200OK,
+                Success = true,
+                Data = await _context.ViHrDeductions.Where(x => x.DeptId == deptId && !x.DeletedOn.HasValue).ToListAsync()
+            });
+        }
 
         [HttpPost]
         [EndpointSummary("Create Deduction")]
@@ -106,7 +119,7 @@ namespace HR_ManagementSystem.Controllers
             _ = _context.HrDeductions.Add(deduction);
             _ = await _context.SaveChangesAsync();
 
-            return Created("api/deduction", new DefaultResponseModel()
+            return Created("api/Deduction", new DefaultResponseModel()
             {
                 Success = true,
                 Code = StatusCodes.Status200OK,
@@ -114,6 +127,7 @@ namespace HR_ManagementSystem.Controllers
                 Message = "Successfully created"
             });
         }
+    
 
         [HttpPut("{id}")]
         [EndpointSummary("Update an deduction")]
