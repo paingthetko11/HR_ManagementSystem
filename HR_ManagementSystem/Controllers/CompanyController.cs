@@ -10,20 +10,7 @@ namespace HR_ManagementSystem.Controllers
     public class CompanyController(AppDbContext context) : ControllerBase
     {
         private readonly AppDbContext _context = context;
-        //[HttpGet]
-        //[EndpointSummary("Get all Compaany")]
-
-        //public async Task<IActionResult> GetComapnyAsync()
-        //{
-        //    List<HrCompany> street = await _context.HrCompanies.ToListAsync();
-        //    return Ok(new DefaultResponseModel()
-        //    {
-        //        Success = true,
-        //        Code = StatusCodes.Status200OK,
-        //        Data = street,
-        //        Message = "Sucessfully Company found"
-        //    });
-        //}
+     
         [HttpGet]
         [Produces("application/json")]
         [ProducesResponseType(typeof(List<ViHrCompany>), StatusCodes.Status200OK)]
@@ -36,33 +23,7 @@ namespace HR_ManagementSystem.Controllers
                 Data = await _context.ViHrCompanies.Where(x => !x.DeletedOn.HasValue).ToListAsync()
             });
         }
-        //[HttpGet("{id}")]
-        //[EndpointSummary("Get by ID")]
-        //public async Task<IActionResult> GetbyIdAsync(string id)
-        //{
-        //    HrCompany? companies = await _context.HrCompanies.FirstOrDefaultAsync(x => x.CompanyId == id);
-
-        //    if (companies == null)
-        //    {
-        //        return NotFound(new DefaultResponseModel()
-        //        {
-        //            Success = false,
-        //            Code = StatusCodes.Status404NotFound,
-        //            Data = null,
-        //            Message = "Company Not found"
-        //        });
-        //    }
-        //    else
-        //    {
-        //        return Ok(new DefaultResponseModel()
-        //        {
-        //            Success = true,
-        //            Code = StatusCodes.Status200OK,
-        //            Data = companies,
-        //            Message = "Company found"
-        //        });
-        //    }
-        //}
+     
         [HttpGet("{id}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(ViHrCompany), StatusCodes.Status200OK)]
