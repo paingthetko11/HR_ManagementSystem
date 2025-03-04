@@ -29,7 +29,7 @@ namespace HR_ManagementSystem.Controllers
         [EndpointSummary("Get by ID")]
         public async Task<IActionResult> GetbyIdAsync(long id)
         {
-            ViHrAllowance? allowance = await _context.ViHrAllowances.FirstOrDefaultAsync(x => x.AllowanceId == id);
+            HrAllowance? allowance = await _context.HrAllowances.FirstOrDefaultAsync(x => x.AllowanceId == id);
 
             if (allowance == null)
             {
