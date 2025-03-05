@@ -51,5 +51,5 @@ public partial class HrJobApplicant
 
     public virtual HrEmployee? Employee { get; set; }
 
-    public virtual HrJobOpening Job { get; set; } = null!;
+    //public virtual HrJobOpening Job { get; set; } = null!;
 }
