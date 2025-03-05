@@ -809,10 +809,10 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey(d => d.EmployeeId)
                 .HasConstraintName("FK_HR_Job_Applicant_HR_Employee");
 
-            entity.HasOne(d => d.Job).WithMany(p => p.HrJobApplicants)
-                .HasForeignKey(d => d.JobId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_HR_Job_Applicant_HR_Job_Opening");
+            //entity.HasOne(d => d.Job).WithMany(p => p.HrJobApplicants)
+            //    .HasForeignKey(d => d.JobId)
+            //    .OnDelete(DeleteBehavior.ClientSetNull)
+            //    .HasConstraintName("FK_HR_Job_Applicant_HR_Job_Opening");
         });
 
         modelBuilder.Entity<HrJobOpening>(entity =>
