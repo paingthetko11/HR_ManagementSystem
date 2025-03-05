@@ -155,7 +155,7 @@ namespace HR_ManagementSystem.Controllers
                 Message = " Failed To Updated "
             });
         }
-        [HttpDelete]
+        [HttpDelete("{id}")]
         [EndpointSummary("Delete Job Opening")]
         public async Task<IActionResult> DeleteAsync(long id)
         {
