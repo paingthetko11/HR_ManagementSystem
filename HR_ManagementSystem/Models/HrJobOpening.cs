@@ -41,5 +41,5 @@ public partial class HrJobOpening
 
     public string? Remark { get; set; }
 
-    public virtual ICollection<HrJobApplicant> HrJobApplicants { get; set; } = new List<HrJobApplicant>();
+    //public virtual ICollection<HrJobApplicant> HrJobApplicants { get; set; } = new List<HrJobApplicant>();
 }
