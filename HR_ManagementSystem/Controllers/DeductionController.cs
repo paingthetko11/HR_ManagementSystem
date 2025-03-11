@@ -3,6 +3,7 @@ using HR_ManagementSystem.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace HR_ManagementSystem.Controllers
 {
@@ -117,17 +118,25 @@ namespace HR_ManagementSystem.Controllers
             }
 
             _ = _context.HrDeductions.Add(deduction);
-            _ = await _context.SaveChangesAsync();
+            int res = await _context.SaveChangesAsync();
 
-            return Created("api/Deduction", new DefaultResponseModel()
-            {
-                Success = true,
-                Code = StatusCodes.Status200OK,
-                Data = deduction,
-                Message = "Successfully created"
-            });
+            return res > 0 ?
+                  Created("api/deduction", new DefaultResponseModel()
+                  {
+                      Success = true,
+                      Code = StatusCodes.Status200OK,
+                      Data = deduction,
+                      Message = "Successfully created"
+                  })
+                  : BadRequest(new DefaultResponseModel()
+                  {
+                      Success = true,
+                      Code = StatusCodes.Status400BadRequest,
+                      Data = deduction,
+                      Message = "failed to created"
+                  });
         }
-    
+
 
         [HttpPut("{id}")]
         [EndpointSummary("Update an deduction")]
