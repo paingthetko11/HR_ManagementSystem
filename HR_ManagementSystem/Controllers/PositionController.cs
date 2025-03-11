@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace HR_ManagementSystem.Controllers
 {
@@ -144,15 +145,23 @@ namespace HR_ManagementSystem.Controllers
             }
 
             _ = _context.HrPositions.Add(position);
-            _ = await _context.SaveChangesAsync();
+            int res = await _context.SaveChangesAsync();
 
-            return Created("api/Company", new DefaultResponseModel()
-            {
-                Success = true,
-                Code = StatusCodes.Status200OK,
-                Data = position,
-                Message = "Successfully created"
-            });
+            return res > 0 ?
+                  Created("api/Position", new DefaultResponseModel()
+                  {
+                      Success = true,
+                      Code = StatusCodes.Status200OK,
+                      Data = position,
+                      Message = "Successfully created"
+                  })
+                  : BadRequest(new DefaultResponseModel()
+                  {
+                      Success = true,
+                      Code = StatusCodes.Status400BadRequest,
+                      Data = position,
+                      Message = "failed to created"
+                  });
         }
 
         [HttpPut("{id}")]
