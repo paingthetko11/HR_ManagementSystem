@@ -68,15 +68,23 @@ namespace HR_ManagementSystem.Controllers
             }
 
             _ = _context.HrAllowances.Add(allowrance);
-            _ = await _context.SaveChangesAsync();
+            int res = await _context.SaveChangesAsync();
 
-            return Created("api/Allowance", new DefaultResponseModel()
-            {
-                Success = true,
-                Code = StatusCodes.Status200OK,
-                Data = allowrance,
-                Message = "Successfully created"
-            });
+            return res > 0 ?
+                  Created("api/Allowance", new DefaultResponseModel()
+                  {
+                      Success = true,
+                      Code = StatusCodes.Status200OK,
+                      Data = allowrance,
+                      Message = "Successfully created"
+                  })
+                  : BadRequest(new DefaultResponseModel()
+                  {
+                      Success = true,
+                      Code = StatusCodes.Status400BadRequest,
+                      Data = allowrance,
+                      Message = "failed to created"
+                  });
         }
 
         [HttpPut("{id}")]
