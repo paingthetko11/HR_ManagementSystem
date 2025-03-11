@@ -56,6 +56,7 @@ namespace HR_ManagementSystem.Controllers
             }
         }
         [HttpPost]
+        [EndpointSummary("Creat State")]
 
         public async Task<IActionResult> CreateAsync([FromBody] HrState state)
         {
@@ -72,22 +73,23 @@ namespace HR_ManagementSystem.Controllers
             }
 
             _context.HrStates.Add(state);
-            return await _context.SaveChangesAsync() > 0
+            int res = await _context.SaveChangesAsync();
 
-            ? Created("api/state", new DefaultResponseModel()
-            {
-                Success = true,
-                Code = StatusCodes.Status201Created,
-                Data = state,
-                Message = "Sucessfully Created"
-            })
-            : BadRequest(new DefaultResponseModel()
-            {
-                Success = false,
-                Code = StatusCodes.Status400BadRequest,
-                Data = null,
-                Message = " State Not Found "
-            });
+            return res > 0 ?
+                  Created("api/state", new DefaultResponseModel()
+                  {
+                      Success = true,
+                      Code = StatusCodes.Status200OK,
+                      Data = state,
+                      Message = "Successfully created"
+                  })
+                  : BadRequest(new DefaultResponseModel()
+                  {
+                      Success = true,
+                      Code = StatusCodes.Status400BadRequest,
+                      Data = state,
+                      Message = "failed to created"
+                  });
         }
         [HttpPut("{id}")]
         [EndpointSummary("Update an State")]
