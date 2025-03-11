@@ -90,15 +90,23 @@ namespace HR_ManagementSystem.Controllers
             }
 
             _ = _context.HrCompanies.Add(company);
-            _ = await _context.SaveChangesAsync();
+            int res = await _context.SaveChangesAsync();
 
-            return Created("api/Company", new DefaultResponseModel()
-            {
-                Success = true,
-                Code = StatusCodes.Status200OK,
-                Data = company,
-                Message = "Successfully created"
-            });
+            return res > 0 ?
+                  Created("api/Company", new DefaultResponseModel()
+                  {
+                      Success = true,
+                      Code = StatusCodes.Status200OK,
+                      Data = company,
+                      Message = "Successfully created"
+                  })
+                  : BadRequest(new DefaultResponseModel()
+                  {
+                      Success = true,
+                      Code = StatusCodes.Status400BadRequest,
+                      Data = company,
+                      Message = "failed to created"
+                  });
         }
 
         [HttpPut("{id}")]
